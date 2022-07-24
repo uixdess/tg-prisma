@@ -43,7 +43,7 @@ bot.action(/.*_.*_.*/i, async (ctx) => {
     await ctx.reply("Подтверждено✅", { reply_to_message_id: msgid });
     await ctx.answerCbQuery();
   } catch (e) {
-    ctx.telegram.sendMessage("-680473958", e.toString());
+    ctx.telegram.sendMessage(process.env.TARGETCHAT, e.toString());
   }
 });
 
@@ -68,7 +68,7 @@ bot.action(/.*-.*-.*/i, async (ctx) => {
     await ctx.reply("Отклонено❌", { reply_to_message_id: msgid });
     await ctx.answerCbQuery();
   } catch (e) {
-    ctx.telegram.sendMessage("-680473958", e.toString());
+    ctx.telegram.sendMessage(process.env.TARGETCHAT, e.toString());
   }
 });
 
@@ -123,14 +123,18 @@ const photoHandler = Telegraf.on("photo", async (ctx) => {
   const file = ctx.update.message.message_id;
   const picture =
     ctx.update.message.photo[1].file_id ?? ctx.update.message.photo[0].file_id;
-  await ctx.telegram.forwardMessage("-680473958", `${ctx.from.id}`, file);
+  await ctx.telegram.forwardMessage(
+    process.env.TARGETCHAT,
+    `${ctx.from.id}`,
+    file
+  );
   const f = await fetch(
     `https://api.telegram.org/bot${process.env.BOT_TOKEN}/getFile?file_id=${picture}`
   );
   const data = await f.json();
   const uid = Date.now() + Number(ctx.from.id);
   await ctx.telegram.sendMessage(
-    "-1001448201398",
+    process.env.TARGETCHAT,
     `@${ctx.from.username ?? "nousername"} произвел оплату\nФио: ${
       ctx.session.name
     }\nip: ${ctx.session.ip}\nСумма пополнения: ${ctx.session.amount}`,
