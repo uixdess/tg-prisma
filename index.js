@@ -109,21 +109,11 @@ const askAmount = Telegraf.hears(
 );
 
 const card = Telegraf.action("pay", async (ctx) => {
-  await ctx.answerCbQuery();
-  await ctx.telegram.sendMessage(
-    "-680473958",
-    `@${ctx.from.username} произвел оплату \n Фио: ${ctx.session.name} \n ip: ${ctx.session.ip} \n Сумма пополнения: ${ctx.session.amount}`,
-    Markup.inlineKeyboard([
-      Markup.button.callback(
-        "Подтвердить",
-        `${ctx.from.id}_${ctx.session.amount}`
-      ),
-    ])
-  );
   await ctx.reply("Номер карты: 4817 7602 6505 7491 \n Сбербанк");
   await ctx.reply(
     "После оплаты пришлите скриншот \n Без него процесс оплаты не будет осуществлен"
   );
+  await ctx.answerCbQuery();
   return ctx.wizard.next();
 });
 
