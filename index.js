@@ -14,6 +14,7 @@ const paykeyboard = Markup.inlineKeyboard([
   Markup.button.callback("Оплатить", "pay"),
 ]);
 let isStarted = false;
+let history = [];
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 bot.start((ctx) => {
@@ -181,6 +182,11 @@ async function generateStatus(data) {
   }
 }
 
+async function filterStatus(s) {
+  const filtered = history.filter((st) => st.status === s);
+  return filtered;
+}
+
 const infoScene = new WizardScene(
   "infoScene",
   askName,
@@ -201,7 +207,12 @@ bot.hears("Оплатить", (ctx) => {
 
 bot.hears("История пополнений", async (ctx) => {
   if (!isStarted) {
-    ctx.reply(
+    history = await prisma.user.findMany({
+      where: {
+        userid: `${ctx.from.id}`,
+      },
+    });
+    await ctx.reply(
       "Выберите желаемый фильтр для истории пополнений",
       Markup.inlineKeyboard([
         [
@@ -218,13 +229,8 @@ bot.hears("История пополнений", async (ctx) => {
 });
 
 bot.action("showall", async (ctx) => {
-  const data = await prisma.user.findMany({
-    where: {
-      userid: `${ctx.from.id}`,
-    },
-  });
-  if (data.length) {
-    for (info of data) {
+  if (history.length) {
+    for (info of history) {
       const status = await generateStatus(info.status);
       await ctx.reply(
         `ip: ${info.ip}\nСумма операции: ${info.amount}\nДата оплаты: ${info.date}\nСтатус: ${status}`
@@ -233,17 +239,12 @@ bot.action("showall", async (ctx) => {
   } else {
     await ctx.reply("У вас ещё не было пополнений");
   }
-  await ctx.reply(`Всего пополнений: ${data.length}`);
+  await ctx.reply(`Всего пополнений: ${history.length}`);
   await ctx.answerCbQuery();
 });
 
 bot.action("accepted", async (ctx) => {
-  const data = await prisma.user.findMany({
-    where: {
-      userid: `${ctx.from.id}`,
-      status: "accepted",
-    },
-  });
+  const data = await filterStatus("accepted");
   if (data.length) {
     for (info of data) {
       const status = await generateStatus(info.status);
@@ -259,12 +260,7 @@ bot.action("accepted", async (ctx) => {
 });
 
 bot.action("denied", async (ctx) => {
-  const data = await prisma.user.findMany({
-    where: {
-      userid: `${ctx.from.id}`,
-      status: "denied",
-    },
-  });
+  const data = await filterStatus("denied");
   if (data.length) {
     for (info of data) {
       const status = await generateStatus(info.status);
@@ -280,12 +276,7 @@ bot.action("denied", async (ctx) => {
 });
 
 bot.action("pending", async (ctx) => {
-  const data = await prisma.user.findMany({
-    where: {
-      userid: `${ctx.from.id}`,
-      status: "pending",
-    },
-  });
+  const data = await filterStatus("pending");
   if (data.length) {
     for (info of data) {
       const status = await generateStatus(info.status);
