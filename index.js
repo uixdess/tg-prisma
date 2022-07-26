@@ -1,4 +1,5 @@
 require("dotenv").config();
+const { BOT_TOKEN, TARGETCHAT } = process.env;
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const fetch = require("node-fetch");
@@ -20,7 +21,7 @@ const paykeyboard = Markup.inlineKeyboard([
 let isStarted = false;
 let history = [];
 
-const bot = new Telegraf(process.env.BOT_TOKEN);
+const bot = new Telegraf(BOT_TOKEN);
 bot.start(async (ctx) => {
   isStarted = false;
   await prisma.userlist.upsert({
@@ -78,7 +79,7 @@ bot.action(/.*_.*_.*/i, async (ctx) => {
     await ctx.reply("Подтверждено✅", { reply_to_message_id: msgid });
     await ctx.answerCbQuery();
   } catch (e) {
-    ctx.telegram.sendMessage(process.env.TARGETCHAT, e.toString());
+    ctx.telegram.sendMessage(TARGETCHAT, e.toString());
   }
 });
 
@@ -103,7 +104,7 @@ bot.action(/.*-.*-.*/i, async (ctx) => {
     await ctx.reply("Отклонено❌", { reply_to_message_id: msgid });
     await ctx.answerCbQuery();
   } catch (e) {
-    ctx.telegram.sendMessage(process.env.TARGETCHAT, e.toString());
+    ctx.telegram.sendMessage(TARGETCHAT, e.toString());
   }
 });
 
@@ -158,18 +159,14 @@ const photoHandler = Telegraf.on("photo", async (ctx) => {
   const file = ctx.update.message.message_id;
   const picture =
     ctx.update.message.photo[1].file_id ?? ctx.update.message.photo[0].file_id;
-  await ctx.telegram.forwardMessage(
-    process.env.TARGETCHAT,
-    `${ctx.from.id}`,
-    file
-  );
+  await ctx.telegram.forwardMessage(TARGETCHAT, `${ctx.from.id}`, file);
   const f = await fetch(
-    `https://api.telegram.org/bot${process.env.BOT_TOKEN}/getFile?file_id=${picture}`
+    `https://api.telegram.org/bot${BOT_TOKEN}/getFile?file_id=${picture}`
   );
   const data = await f.json();
   const uid = Date.now() + Number(ctx.from.id);
   await ctx.telegram.sendMessage(
-    process.env.TARGETCHAT,
+    TARGETCHAT,
     `@${ctx.from.username ?? "nousername"} произвел оплату\nФио: ${
       ctx.session.name
     }\nip: ${ctx.session.ip}\nСумма пополнения: ${ctx.session.amount}`,
@@ -194,7 +191,7 @@ const photoHandler = Telegraf.on("photo", async (ctx) => {
         username: `${ctx.from.username ?? "nousername"}`,
         userid: `${ctx.from.id}`,
         date: `${JSON.stringify(new Date().toLocaleString())}`,
-        url: `https://api.telegram.org/file/bot${process.env.BOT_TOKEN}/${data.result.file_path}`,
+        url: `https://api.telegram.org/file/bot${BOT_TOKEN}/${data.result.file_path}`,
         status: "pending",
       },
     });
