@@ -10,6 +10,10 @@ const {
 const keyboard = Markup.keyboard(["Оплатить", "История пополнений"])
   .oneTime()
   .resize();
+const akeyboard = Markup.inlineKeyboard([
+  [Markup.button.callback("Массовая рассылка", "sendtoall")],
+  [Markup.button.callback("Платежи в ожидании", "allpending")],
+]);
 const paykeyboard = Markup.inlineKeyboard([
   Markup.button.callback("Оплатить", "pay"),
 ]);
@@ -17,9 +21,40 @@ let isStarted = false;
 let history = [];
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
-bot.start((ctx) => {
+bot.start(async (ctx) => {
   isStarted = false;
-  ctx.reply(`Привет, ${ctx.from.first_name}`, keyboard);
+  await prisma.userlist.upsert({
+    where: {
+      userid: `${ctx.from.id}`,
+    },
+    update: {},
+    create: {
+      userid: `${ctx.from.id}`,
+    },
+  });
+  if (ctx.from.id === 314012178) {
+    await ctx.reply(`Привет, ${ctx.from.first_name}`, akeyboard);
+  } else {
+    await ctx.reply(`Привет, ${ctx.from.first_name}`, keyboard);
+  }
+});
+
+bot.action("allpending", async (ctx) => {
+  const all = await prisma.user.findMany({
+    where: {
+      status: "pending",
+    },
+  });
+  if (!all.length) {
+    await ctx.reply("Нет платежей в ожидании");
+    return;
+  }
+  for (info of all) {
+    await ctx.reply(
+      `ip: ${info.ip}\nСумма операции: ${info.amount}\nДата оплаты: ${info.date}\nСтатус: Ожидает подтверждения⏳`
+    );
+  }
+  await ctx.answerCbQuery();
 });
 
 bot.action(/.*_.*_.*/i, async (ctx) => {
@@ -201,12 +236,33 @@ const infoScene = new WizardScene(
   photoHandler
 );
 
-const stage = new Stage([infoScene]);
+const askText = async (ctx) => {
+  await ctx.reply("Введите текст для рассылки");
+  return ctx.wizard.next();
+};
+
+const sendText = Telegraf.on("text", async (ctx) => {
+  const all = await prisma.userlist.findMany();
+  for (user of all) {
+    await ctx.telegram.sendMessage(`${user.userid}`, `${ctx.message.text}`);
+  }
+  await ctx.reply(`Количество отправленных сообщений: ${all.length}`);
+  return ctx.scene.leave();
+});
+
+const sendall = new WizardScene("sendall", askText, sendText);
+
+const stage = new Stage([infoScene, sendall]);
 bot.use(session(), stage.middleware());
 bot.hears("Оплатить", (ctx) => {
   if (!isStarted) {
     ctx.scene.enter("infoScene");
   }
+});
+
+bot.action("sendtoall", async (ctx) => {
+  await ctx.answerCbQuery();
+  return ctx.scene.enter("sendall");
 });
 
 bot.hears("История пополнений", async (ctx) => {

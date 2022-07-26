@@ -21,3 +21,7 @@ model User {
   url       String
   status    String
 }
+
+model Userlist {
+  userid String @unique
+}
