@@ -25,3 +25,9 @@ model User {
 model Userlist {
   userid String @unique
 }
+
+model Adminstats {
+  userid   String @unique
+  accepted Int    @default(0)
+  denied   Int    @default(0)
+}

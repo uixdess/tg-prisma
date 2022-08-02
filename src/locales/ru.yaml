@@ -1,0 +1,50 @@
+start: >
+  Привет, ${ctx.from.first_name}
+
+name: >
+  Введите Ваше фио:
+
+ip: |
+  Введите ваш ip:
+  Примечание: Если введете некорректный адрес, то оплата не продолжится до тех пор, пока он не будет корректен
+
+amount: |
+  Введите сумму оплаты:
+  Примечание: Сумма должна быть кратна 10
+
+beforepay: |
+  Ваше фио: ${ctx.session.name}
+  Ваш ip: ${ctx.session.ip}
+  Сумма пополнения: ${ctx.session.amount}
+
+cardnum: |
+  Номер карты: 4817 7602 6505 7491
+  Сбербанк
+
+screenshot: |
+  После оплаты пришлите скриншот.
+  Без него процесс оплаты не будет осуществлен
+
+thanks: >
+  Спасибо, после проверки ваш баланс будет пополнен
+
+forcheck: |
+  @${ctx.from.username} произвел оплату
+  Фио: ${ctx.session.name}
+  ip: ${ctx.session.ip}
+  Сумма пополнения: ${ctx.session.amount}
+
+forchecknoname: |
+  <a href="tg://user?id=${ctx.from.id}">Пользователь без username</a> произвел оплату
+  Фио: ${ctx.session.name}
+  ip: ${ctx.session.ip}
+  Сумма пополнения: ${ctx.session.amount}
+
+filterchoose: >
+  Выберите желаемый фильтр для истории пополнений
+
+sendtext: >
+  Введите текст для рассылки:
+
+sendcount: >
+  Количество отправленных сообщений: ${all.length}
