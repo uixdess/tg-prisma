@@ -2,7 +2,7 @@ const { Markup } = require("telegraf");
 
 class Keyboard {
   static keyboard() {
-    return Markup.keyboard(["Оплатить", "История пополнений"])
+    return Markup.keyboard(["Оплатить", "Нужна помощь", "История пополнений"])
       .oneTime()
       .resize();
   }
@@ -38,6 +38,13 @@ class Keyboard {
 
   static delete() {
     return Markup.removeKeyboard();
+  }
+
+  static help() {
+    return Markup.inlineKeyboard([
+      [Markup.button.url("Помощь по платежам", "tg://user?id=314012178")],
+      [Markup.button.url("Помощь по боту", "tg://user?id=416135184")],
+    ]);
   }
 }
 

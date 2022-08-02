@@ -15,6 +15,14 @@ module.exports = new Scenes.WizardScene(
     return ctx.wizard.next();
   },
   Telegraf.on("text", async (ctx) => {
+    if (ctx.update.message.text == "Нужна помощь") {
+      await ctx.scene.leave();
+      await setState(false);
+      return ctx.reply(
+        "Если что-то пошло не-так Вы можете написать /start или написать об этом",
+        board.help()
+      );
+    }
     ctx.session.name = ctx.message.text;
     await ctx.reply(ctx.i18n.t("ip"));
     return ctx.wizard.next();

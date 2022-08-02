@@ -14,7 +14,7 @@ const i18n = new TelegrafI18n({
   allowMissing: false,
   directory: path.resolve(__dirname, "locales"),
 });
-const { getState } = require("./modules/state");
+const { getState, setState } = require("./modules/state");
 const board = require("./modules/keyboards");
 bot.use(session());
 const stage = new Scenes.Stage([infoScene, sendscene]);
@@ -237,6 +237,15 @@ bot.hears("Оплатить", (ctx) => {
   if (!getState()) {
     ctx.scene.enter("infoScene");
   }
+});
+
+bot.hears("Нужна помощь", async (ctx) => {
+  await ctx.scene.leave();
+  await setState(false);
+  await ctx.reply(
+    "Если что-то пошло не-так Вы можете написать /start или написать об этом",
+    board.help()
+  );
 });
 
 bot.hears("История пополнений", async (ctx) => {
