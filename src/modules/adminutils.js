@@ -2,7 +2,7 @@ const { Composer } = require("telegraf");
 const composer = new Composer();
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-const isAdmin = require("../middlewares/isadmin");
+const { isAdmin } = require("../middlewares/isadmin");
 const board = require("./keyboards");
 
 composer.hears(/add(.+)/i, async (ctx) => {

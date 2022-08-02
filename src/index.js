@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 const { Scenes, session } = require("telegraf");
 const infoScene = require("./scenes/infoScene/");
 const sendscene = require("./scenes/sendAll/");
-const { isAdmin, isAdminctx } = require("./middlewares/isadmin");
+const { isAdminctx } = require("./middlewares/isadmin");
 const TelegrafI18n = require("telegraf-i18n");
 const i18n = new TelegrafI18n({
   defaultLanguage: "ru",
