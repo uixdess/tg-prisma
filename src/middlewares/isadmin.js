@@ -17,7 +17,7 @@ async function isAdminctx(ctx, next) {
   if (state !== undefined) {
     return next();
   } else {
-    ctx.reply("Вы не администратор😣");
+    ctx.answerCbQuery("Вы не администратор😣");
   }
 }
 
