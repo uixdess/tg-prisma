@@ -23,6 +23,7 @@ bot.use(stage.middleware());
 bot.use(require("./modules/start").middleware());
 bot.use(require("./modules/deletekeyboard").middleware());
 bot.use(require("./modules/adminutils").middleware());
+bot.use(require("./modules/link").middleware());
 let history = [];
 
 const generateStatus = async function (data) {
