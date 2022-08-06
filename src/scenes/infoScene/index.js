@@ -28,7 +28,7 @@ module.exports = new Scenes.WizardScene(
     return ctx.wizard.next();
   }),
   Telegraf.hears(
-    /^(10)\.(24)\.(19[7-9]|20[0-3])\.([0-9]|[0-9][0-9]|[0-9][0-9][0-9])$/,
+    /^(10)\.(24)\.(19[6-9]|20[0-3])\.([0-9]|[0-9][0-9]|[0-9][0-9][0-9])$/,
     async (ctx) => {
       ctx.session.ip = ctx.message.text;
       await ctx.reply(ctx.i18n.t("amount"));
