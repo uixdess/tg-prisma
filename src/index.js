@@ -94,7 +94,6 @@ bot.action("allpending", async (ctx) => {
 });
 
 bot.action(/.*_.*_.*/i, isAdminctx, async (ctx) => {
-  const text = ctx.update.callback_query.message.text;
   const data = ctx.update.callback_query.data.split("_");
   const msgid = ctx.update.callback_query.message.message_id;
   try {
@@ -116,7 +115,7 @@ bot.action(/.*_.*_.*/i, isAdminctx, async (ctx) => {
       reply_to_message_id: msgid,
     });
     await ctx.answerCbQuery("Подтверждено✅");
-    await ctx.editMessageText(text);
+    await ctx.editMessageReplyMarkup(Markup.inlineKeyboard([]));
     await prisma.adminstats.update({
       where: {
         userid: `${ctx.from.id}`,
@@ -133,7 +132,6 @@ bot.action(/.*_.*_.*/i, isAdminctx, async (ctx) => {
 });
 
 bot.action(/.*-.*-.*/i, isAdminctx, async (ctx) => {
-  const text = ctx.update.callback_query.message.text;
   const data = ctx.update.callback_query.data.split("-");
   const msgid = ctx.update.callback_query.message.message_id;
   try {
@@ -155,7 +153,7 @@ bot.action(/.*-.*-.*/i, isAdminctx, async (ctx) => {
       reply_to_message_id: msgid,
     });
     await ctx.answerCbQuery("Отклонен❌");
-    await ctx.editMessageText(text);
+    await ctx.editMessageReplyMarkup(Markup.inlineKeyboard([]));
     await prisma.adminstats.update({
       where: {
         userid: `${ctx.from.id}`,
