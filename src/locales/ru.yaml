@@ -35,7 +35,7 @@ forcheck: |
   Сумма пополнения: ${ctx.session.amount}
 
 forchecknoname: |
-  <a href="tg://user?id=${ctx.from.id}">Пользователь без username</a> произвел оплату
+  <a href="tg://user?id=${ctx.from.id}">${ctx.from.first_name || ctx.from.id}</a> произвел оплату
   Фио: ${ctx.session.name}
   ip: ${ctx.session.ip}
   Сумма пополнения: ${ctx.session.amount}

@@ -1,9 +1,8 @@
 require("dotenv").config();
-const { BOT_TOKEN, TARGETCHAT } = process.env;
+const { TARGETCHAT } = process.env;
 const { Telegraf, Markup, Scenes } = require("telegraf");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-const fetch = require("node-fetch");
 const { setState } = require("../../modules/state");
 const board = require("../../modules/keyboards");
 
@@ -53,10 +52,7 @@ module.exports = new Scenes.WizardScene(
       ctx.update.message.photo[1].file_id ??
       ctx.update.message.photo[0].file_id;
     await ctx.telegram.forwardMessage(TARGETCHAT, `${ctx.from.id}`, file);
-    const f = await fetch(
-      `https://api.telegram.org/bot${BOT_TOKEN}/getFile?file_id=${picture}`
-    );
-    const data = await f.json();
+    const link = await ctx.telegram.getFileLink(picture);
     const uid = Date.now() + Number(ctx.from.id);
     if (ctx.from.username === undefined) {
       await ctx.telegram.sendMessage(
@@ -102,7 +98,7 @@ module.exports = new Scenes.WizardScene(
           username: `${ctx.from.username ?? "nousername"}`,
           userid: `${ctx.from.id}`,
           date: `${JSON.stringify(new Date().toLocaleString())}`,
-          url: `https://api.telegram.org/file/bot${BOT_TOKEN}/${data.result.file_path}`,
+          url: link.href,
           status: "pending",
         },
       });

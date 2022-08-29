@@ -93,29 +93,30 @@ bot.action("allpending", async (ctx) => {
   await ctx.answerCbQuery();
 });
 
-bot.action(/.*_.*_.*/i, isAdminctx, async (ctx) => {
-  const data = ctx.update.callback_query.data.split("_");
+bot.action(/(.*)_(.*)_(.*)/i, isAdminctx, async (ctx) => {
+  const [full, userid, amount, id] = ctx.match;
+  const { text, entities } = ctx.callbackQuery.message;
   const msgid = ctx.update.callback_query.message.message_id;
   try {
     await prisma.user.updateMany({
       where: {
-        userid: `${data[0]}`,
-        amount: `${data[1]}`,
-        id: `${data[2]}`,
+        userid: userid,
+        amount: amount,
+        id: id,
       },
       data: {
         status: "accepted",
       },
     });
     await ctx.telegram.sendMessage(
-      `${data[0]}`,
-      `Ваш баланс был пополнен на ${data[1]} рублей.`
+      `${userid}`,
+      `Ваш баланс был пополнен на ${amount} рублей.`
     );
     await ctx.reply(`${ctx.from.first_name} подтвердил платеж✅`, {
       reply_to_message_id: msgid,
     });
     await ctx.answerCbQuery("Подтверждено✅");
-    await ctx.editMessageReplyMarkup(Markup.inlineKeyboard([]));
+    await ctx.editMessageText(text, { entities });
     await prisma.adminstats.update({
       where: {
         userid: `${ctx.from.id}`,
@@ -132,28 +133,29 @@ bot.action(/.*_.*_.*/i, isAdminctx, async (ctx) => {
 });
 
 bot.action(/.*-.*-.*/i, isAdminctx, async (ctx) => {
-  const data = ctx.update.callback_query.data.split("-");
+  const [full, userid, amount, id] = ctx.match;
+  const { text, entities } = ctx.callbackQuery.message;
   const msgid = ctx.update.callback_query.message.message_id;
   try {
     await prisma.user.updateMany({
       where: {
-        userid: `${data[0]}`,
-        amount: `${data[1]}`,
-        id: `${data[2]}`,
+        userid: userid,
+        amount: amount,
+        id: id,
       },
       data: {
         status: "denied",
       },
     });
     await ctx.telegram.sendMessage(
-      `${data[0]}`,
-      `Отклонено пополнение баланса на ${data[1]} рублей.`
+      `${userid}`,
+      `Отклонено пополнение баланса на ${amount} рублей.`
     );
     await ctx.reply(`${ctx.from.first_name} отклонил платеж❌`, {
       reply_to_message_id: msgid,
     });
     await ctx.answerCbQuery("Отклонен❌");
-    await ctx.editMessageReplyMarkup(Markup.inlineKeyboard([]));
+    await ctx.editMessageText(text, { entities });
     await prisma.adminstats.update({
       where: {
         userid: `${ctx.from.id}`,

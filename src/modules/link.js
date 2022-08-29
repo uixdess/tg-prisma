@@ -7,8 +7,8 @@ const users = require("../users.json").users.item;
 
 composer.hears(/link(.+)/i, isAdmin, async (ctx) => {
   const name = ctx.match[1].trim();
-  const f = await users.find(
-    (u) => u.fullname.toLowerCase().includes(name.toLowerCase()) === true
+  const f = await users.find((u) =>
+    u.fullname.toLowerCase().includes(name.toLowerCase())
   )?.uid;
   if (f !== undefined) {
     ctx.reply(
