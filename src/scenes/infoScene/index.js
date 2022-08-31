@@ -54,29 +54,12 @@ module.exports = new Scenes.WizardScene(
     await ctx.telegram.forwardMessage(TARGETCHAT, `${ctx.from.id}`, file);
     const link = await ctx.telegram.getFileLink(picture);
     const uid = Date.now() + Number(ctx.from.id);
-    if (ctx.from.username === undefined) {
-      await ctx.telegram.sendMessage(
-        TARGETCHAT,
-        ctx.i18n.t("forchecknoname", { ctx }),
-        {
-          parse_mode: "HTML",
-          ...Markup.inlineKeyboard([
-            Markup.button.callback(
-              "Подтвердить",
-              `${ctx.from.id}_${ctx.session.amount}_${uid}`
-            ),
-            Markup.button.callback(
-              "Отклонить",
-              `${ctx.from.id}-${ctx.session.amount}-${uid}`
-            ),
-          ]),
-        }
-      );
-    } else {
-      await ctx.telegram.sendMessage(
-        TARGETCHAT,
-        ctx.i18n.t("forcheck", { ctx }),
-        Markup.inlineKeyboard([
+    await ctx.telegram.sendMessage(
+      TARGETCHAT,
+      ctx.i18n.t("forcheck", { ctx }),
+      {
+        parse_mode: "HTML",
+        ...Markup.inlineKeyboard([
           Markup.button.callback(
             "Подтвердить",
             `${ctx.from.id}_${ctx.session.amount}_${uid}`
@@ -85,9 +68,9 @@ module.exports = new Scenes.WizardScene(
             "Отклонить",
             `${ctx.from.id}-${ctx.session.amount}-${uid}`
           ),
-        ])
-      );
-    }
+        ]),
+      }
+    );
     try {
       await prisma.user.create({
         data: {

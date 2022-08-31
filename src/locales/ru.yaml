@@ -29,12 +29,6 @@ thanks: >
   Спасибо, после проверки ваш баланс будет пополнен
 
 forcheck: |
-  @${ctx.from.username} произвел оплату
-  Фио: ${ctx.session.name}
-  ip: ${ctx.session.ip}
-  Сумма пополнения: ${ctx.session.amount}
-
-forchecknoname: |
   <a href="tg://user?id=${ctx.from.id}">${ctx.from.first_name || ctx.from.id}</a> произвел оплату
   Фио: ${ctx.session.name}
   ip: ${ctx.session.ip}
