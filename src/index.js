@@ -132,7 +132,7 @@ bot.action(/(.*)_(.*)_(.*)/i, isAdminctx, async (ctx) => {
   }
 });
 
-bot.action(/.*-.*-.*/i, isAdminctx, async (ctx) => {
+bot.action(/(.*)-(.*)-(.*)/i, isAdminctx, async (ctx) => {
   const [full, userid, amount, id] = ctx.match;
   const { text, entities } = ctx.callbackQuery.message;
   const msgid = ctx.update.callback_query.message.message_id;
