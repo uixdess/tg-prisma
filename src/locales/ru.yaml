@@ -2,23 +2,25 @@ start: >
   Привет, ${ctx.from.first_name}
 
 name: >
-  Введите Ваше фио:
+  Введите Ваше ФИО:
 
 ip: |
-  Введите ваш ip:
-  Примечание: Если введете некорректный адрес, то оплата не продолжится до тех пор, пока он не будет корректен
+  Введите ваш IP:
+  Примечание: Если введете некорректный адрес, то оплата не продолжится до тех пор, пока он не будет корректен.
+  IP адрес можно посмотреть в личном кабинете https://billing.well-telecom.ru/
+  Пример: 10.24.201.1
 
 amount: |
   Введите сумму оплаты:
   Примечание: Сумма должна быть кратна 10
 
 beforepay: |
-  Ваше фио: ${ctx.session.name}
-  Ваш ip: ${ctx.session.ip}
+  Ваше ФИО: ${ctx.session.name}
+  Ваш IP: ${ctx.session.ip}
   Сумма пополнения: ${ctx.session.amount}
 
 cardnum: |
-  Номер карты: 4817 7602 6505 7491
+  Номер карты: 4817760265057491
   Сбербанк
 
 screenshot: |
@@ -30,8 +32,8 @@ thanks: >
 
 forcheck: |
   <a href="tg://user?id=${ctx.from.id}">${ctx.from.first_name || ctx.from.id}</a> произвел оплату
-  Фио: ${ctx.session.name}
-  ip: ${ctx.session.ip}
+  ФИО: ${ctx.session.name}
+  IP: ${ctx.session.ip}
   Сумма пополнения: ${ctx.session.amount}
 
 filterchoose: >
