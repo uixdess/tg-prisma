@@ -32,7 +32,7 @@ thanks: >
 
 forcheck: |
   <a href="tg://user?id=${ctx.from.id}">${ctx.from.first_name || ctx.from.id}</a> произвел оплату
-  ФИО: ${ctx.session.name}
+  ФИО: <pre>${ctx.session.name}</pre>
   IP: ${ctx.session.ip}
   Сумма пополнения: ${ctx.session.amount}
 
