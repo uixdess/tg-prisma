@@ -1,16 +1,17 @@
 require("dotenv").config();
-const { TARGETCHAT } = process.env;
+const { TARGETCHAT, LINK } = process.env;
 const { Telegraf, Markup, Scenes } = require("telegraf");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const { setState } = require("../../modules/state");
 const board = require("../../modules/keyboards");
+const users = require("../../users.json").users.item;
 
 module.exports = new Scenes.WizardScene(
   "infoScene",
   async (ctx) => {
     await setState(true);
-    await ctx.reply(ctx.i18n.t("name"));
+    await ctx.reply(ctx.i18n.t("id"));
     return ctx.wizard.next();
   },
   Telegraf.on("text", async (ctx) => {
@@ -22,7 +23,23 @@ module.exports = new Scenes.WizardScene(
         board.help()
       );
     }
-    ctx.session.name = ctx.message.text;
+    uid = ctx.message.text;
+    ctx.session.id = uid;
+    const f = await users.find((id) => id.uid == uid);
+    if (f !== undefined) {
+      ctx.session.name = f.fullname;
+      await ctx.reply(
+        `Поиск по id ${uid}\nФио: ${f.fullname}`,
+        board.paytoip()
+      );
+      return ctx.wizard.next();
+    } else {
+      await ctx.scene.leave();
+      return ctx.reply("Пользователь с таким id не был найден", board.enter());
+    }
+  }),
+  Telegraf.action("gotoip", async (ctx) => {
+    await ctx.editMessageReplyMarkup({});
     await ctx.reply(ctx.i18n.t("ip"));
     return ctx.wizard.next();
   }),
@@ -46,6 +63,11 @@ module.exports = new Scenes.WizardScene(
     return ctx.wizard.next();
   }),
   Telegraf.on("photo", async (ctx) => {
+    if (ctx.update.message.media_group_id) {
+      return ctx.reply(
+        "Бот принимает только один скриншот\nОтправьте изображение заново"
+      );
+    }
     await setState(false);
     const file = ctx.update.message.message_id;
     const picture =
@@ -60,14 +82,17 @@ module.exports = new Scenes.WizardScene(
       {
         parse_mode: "HTML",
         ...Markup.inlineKeyboard([
-          Markup.button.callback(
-            "Подтвердить",
-            `${ctx.from.id}_${ctx.session.amount}_${uid}`
-          ),
-          Markup.button.callback(
-            "Отклонить",
-            `${ctx.from.id}-${ctx.session.amount}-${uid}`
-          ),
+          [Markup.button.url("Добавить платеж", LINK + ctx.session.id)],
+          [
+            Markup.button.callback(
+              "Подтвердить",
+              `${ctx.from.id}_${ctx.session.amount}_${uid}`
+            ),
+            Markup.button.callback(
+              "Отклонить",
+              `${ctx.from.id}-${ctx.session.amount}-${uid}`
+            ),
+          ],
         ]),
       }
     );

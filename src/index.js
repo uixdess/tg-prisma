@@ -234,6 +234,24 @@ bot.action("pending", async (ctx) => {
   await ctx.answerCbQuery();
 });
 
+bot.action("enter", async (ctx) => {
+  try {
+    await ctx.editMessageReplyMarkup({});
+    return ctx.scene.enter("infoScene");
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+bot.action("reenter", async (ctx) => {
+  try {
+    await ctx.editMessageReplyMarkup({});
+    return ctx.scene.reenter();
+  } catch (e) {
+    console.log(e);
+  }
+});
+
 bot.hears("Оплатить", (ctx) => {
   if (!getState()) {
     ctx.scene.enter("infoScene");

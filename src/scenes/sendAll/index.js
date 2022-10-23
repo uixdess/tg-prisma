@@ -1,7 +1,7 @@
 const { Telegraf, Scenes } = require("telegraf");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-const { send, back } = require("./actions");
+const { back } = require("./actions");
 const board = require("../../modules/keyboards");
 
 const sendscene = new Scenes.WizardScene(
@@ -13,8 +13,17 @@ const sendscene = new Scenes.WizardScene(
   },
   Telegraf.on("text", async (ctx) => {
     const all = await prisma.userlist.findMany();
+    let ok = 0;
+    let failed = 0;
     for (user of all) {
-      await ctx.telegram.sendMessage(`${user.userid}`, `${ctx.message.text}`);
+      const msg = await ctx.telegram
+        .sendMessage(`${user.userid}`, `${ctx.message.text}`)
+        .catch((e) => e);
+      if (msg.message_id) {
+        ok++;
+      } else {
+        failed++;
+      }
     }
     try {
       await ctx.telegram.editMessageText(
@@ -24,8 +33,12 @@ const sendscene = new Scenes.WizardScene(
         "🤖Вы успешно вошли в админ меню🤖",
         board.akeyboard()
       );
-    } catch (e) {}
-    await ctx.reply(ctx.i18n.t("sendcount", { all }));
+    } catch (e) {
+      console.log(e);
+    }
+    await ctx.reply(
+      `Отправлено: ${ok} сообщений\nНе удалось отправить: ${failed} сообщений`
+    );
     return ctx.scene.leave();
   })
 );

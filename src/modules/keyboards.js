@@ -46,6 +46,19 @@ class Keyboard {
       [Markup.button.url("Помощь по боту", "tg://user?id=416135184")],
     ]);
   }
+
+  static enter() {
+    return Markup.inlineKeyboard([
+      [Markup.button.callback("Ввести данные заново", "enter")],
+    ]);
+  }
+
+  static paytoip() {
+    return Markup.inlineKeyboard([
+      [Markup.button.callback("Ввести данные заново", "reenter")],
+      [Markup.button.callback("Все верно", "gotoip")],
+    ]);
+  }
 }
 
 module.exports = Keyboard;

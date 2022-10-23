@@ -1,8 +1,8 @@
 start: >
   Привет, ${ctx.from.first_name}
 
-name: >
-  Введите Ваше ФИО:
+id: >
+  Введите Ваш id:
 
 ip: |
   Введите ваш IP:
@@ -41,6 +41,3 @@ filterchoose: >
 
 sendtext: >
   Введите текст для рассылки:
-
-sendcount: >
-  Количество отправленных сообщений: ${all.length}
