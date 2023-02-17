@@ -4,7 +4,7 @@ const path = require("path");
 const { TARGETCHAT } = process.env;
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-const { Scenes, session } = require("telegraf");
+const { Scenes, session, Markup } = require("telegraf");
 const infoScene = require("./scenes/infoScene/");
 const sendscene = require("./scenes/sendAll/");
 const { isAdminctx } = require("./middlewares/isadmin");
@@ -86,8 +86,10 @@ bot.action("allpending", async (ctx) => {
     return;
   }
   for (info of all) {
+    let link = "https://t.me/c/" + `${TARGETCHAT.slice(4) + "/" + info.msgid}`;
     await ctx.reply(
-      `ip: ${info.ip}\nСумма операции: ${info.amount}\nДата оплаты: ${info.date}\nСтатус: Ожидает подтверждения⏳`
+      `ip: ${info.ip}\nСумма операции: ${info.amount}\nДата оплаты: ${info.date}\nСтатус: Ожидает подтверждения⏳`,
+      Markup.inlineKeyboard([[Markup.button.url("Перейти к платежу", link)]])
     );
   }
   await ctx.answerCbQuery();

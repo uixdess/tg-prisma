@@ -76,7 +76,7 @@ module.exports = new Scenes.WizardScene(
     await ctx.telegram.forwardMessage(TARGETCHAT, `${ctx.from.id}`, file);
     const link = await ctx.telegram.getFileLink(picture);
     const uid = Date.now() + Number(ctx.from.id);
-    await ctx.telegram.sendMessage(
+    const msg = await ctx.telegram.sendMessage(
       TARGETCHAT,
       ctx.i18n.t("forcheck", { ctx }),
       {
@@ -108,6 +108,7 @@ module.exports = new Scenes.WizardScene(
           date: `${JSON.stringify(new Date().toLocaleString())}`,
           url: link.href,
           status: "pending",
+          msgid: `${msg.message_id}`,
         },
       });
     } catch (e) {
