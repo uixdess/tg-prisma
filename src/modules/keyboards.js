@@ -42,7 +42,7 @@ class Keyboard {
 
   static help() {
     return Markup.inlineKeyboard([
-      [Markup.button.url("Помощь по платежам", "tg://user?id=314012178")],
+      [Markup.button.url("Помощь по платежам", "tg://user?id=5809953012")],
       [Markup.button.url("Помощь по боту", "tg://user?id=416135184")],
     ]);
   }
