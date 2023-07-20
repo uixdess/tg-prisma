@@ -20,7 +20,7 @@ model User {
   date      String
   url       String
   status    String
-  msgid     String @default("")
+  msgid     String
 }
 
 model Userlist {
