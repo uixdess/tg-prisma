@@ -1,7 +1,7 @@
 require("dotenv").config();
 const bot = require("./bot");
 const path = require("path");
-const { TARGETCHAT } = process.env;
+const { TARGETCHAT, STARTID } = process.env;
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const { Scenes, session, Markup } = require("telegraf");
@@ -282,6 +282,12 @@ bot.hears("История пополнений", async (ctx) => {
 
 bot
   .launch()
+  .then(
+    bot.telegram.sendMessage(
+      `${STARTID}`,
+      `Бот был запущен ${new Date().toLocaleDateString()} в ${new Date().toLocaleTimeString()}`
+    )
+  )
   .then(console.log("bot started"))
   .catch((e) => console.error(e));
 
