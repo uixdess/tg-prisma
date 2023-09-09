@@ -2,7 +2,7 @@ const { Markup } = require("telegraf");
 
 class Keyboard {
   static keyboard() {
-    return Markup.keyboard(["Оплатить", "Нужна помощь", "История пополнений"])
+    return Markup.keyboard(["Оплатить", "История пополнений"])
       .oneTime()
       .resize();
   }

@@ -261,15 +261,6 @@ bot.hears("Оплатить", (ctx) => {
   }
 });
 
-bot.hears("Нужна помощь", async (ctx) => {
-  await ctx.scene.leave();
-  await setState(false);
-  await ctx.reply(
-    "Если что-то пошло не-так Вы можете написать /start или написать об этом",
-    board.help()
-  );
-});
-
 bot.hears("История пополнений", async (ctx) => {
   if (!getState()) {
     history = await prisma.user.findMany({
