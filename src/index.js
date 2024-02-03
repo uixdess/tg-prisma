@@ -14,12 +14,20 @@ const i18n = new TelegrafI18n({
   allowMissing: false,
   directory: path.resolve(__dirname, "locales"),
 });
+const rateLimit = require("telegraf-ratelimit");
+const limitConfig = {
+  window: 1000,
+  limit: 1,
+  onLimitExceeded: (ctx) =>
+    console.log(`Rate limit exceeded by id${ctx.from.id}`),
+};
 const { getState, setState } = require("./modules/state");
 const board = require("./modules/keyboards");
 bot.use(session());
 const stage = new Scenes.Stage([infoScene, sendscene]);
 bot.use(i18n.middleware());
 bot.use(stage.middleware());
+bot.use(rateLimit(limitConfig));
 bot.use(require("./modules/start").middleware());
 bot.use(require("./modules/deletekeyboard").middleware());
 bot.use(require("./modules/adminutils").middleware());
